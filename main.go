@@ -29,7 +29,7 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	// api.GET("/users/fetch", userHandler.Login)
-
+	//tes
 	router.Run()
 
 }
