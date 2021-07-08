@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bwastartup/auth"
 	"bwastartup/helper"
 	"bwastartup/user"
 	"fmt"
@@ -11,10 +12,11 @@ import (
 
 type userHandler struct {
 	userService user.Service
+	authService auth.Service
 }
 
-func NewUserHandler(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService, authService}
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
@@ -31,9 +33,21 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	newuser, err := h.userService.RegisterUser(input)
+	newUser, err := h.userService.RegisterUser(input)
+	if err != nil {
+		response := helper.APIResponse("Register Account Failed!", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	token, err := h.authService.GenerateToken(newUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Register Account Failed!", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
 	//masukkin response formatter
-	formatter := user.FormatUser(newuser, "tokentokentoken")
+	formatter := user.FormatUser(newUser, token)
 	response := helper.APIResponse("Account Has Been Registered", http.StatusOK, "success", formatter)
 	if err != nil {
 		response := helper.APIResponse("Register Account Failed!", http.StatusBadRequest, "error", nil)
@@ -64,7 +78,13 @@ func (h *userHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	formatter := user.FormatUser(loggedinUser, "tokentokentoken")
+	token, err := h.authService.GenerateToken(loggedinUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Login Account Failed!", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	formatter := user.FormatUser(loggedinUser, token)
 	response := helper.APIResponse("Login Success", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusBadRequest, response)
 	//mapping input ke struct
