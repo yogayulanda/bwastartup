@@ -35,8 +35,6 @@ func main() {
 	authService := auth.NewService()
 
 	//testing
-	// campaign, err := campaignService.FindCampaigns(80)
-	// fmt.Println(len(campaign))
 
 	//Deklarasi Handler
 	userHandler := handler.NewUserHandler(userService, authService)
@@ -56,6 +54,7 @@ func main() {
 	//Handler Campaigns
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 
 	// Run Handler
 	router.Run()
