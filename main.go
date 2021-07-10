@@ -6,7 +6,6 @@ import (
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/user"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -18,39 +17,47 @@ import (
 )
 
 func main() {
+	//Connect DB
 	dsn := "root:root@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-
 	if err != nil {
 		//Hentikan Program dan Munculkan Error
 		log.Fatal(err.Error())
 	}
 
+	//Deklarasi Repository
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
 
+	//Deklarasi Service
 	campaignService := campaign.NewService(campaignRepository)
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 
-	//testing\
-	campaign, err := campaignService.FindCampaigns(80)
-	fmt.Println(len(campaign))
+	//testing
+	// campaign, err := campaignService.FindCampaigns(80)
+	// fmt.Println(len(campaign))
 
+	//Deklarasi Handler
 	userHandler := handler.NewUserHandler(userService, authService)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 	router := gin.Default()
 	api := router.Group("/api/v1")
 
+	// Handler user
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
 	// api.GET("/users/fetch", userHandler.Login)
-	//tes
-	router.Run()
+	//Handler Campaigns
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
+	// Run Handler
+	router.Run()
 }
 
+//Func Middlerware
 func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc {
 	//get middleware
 	return func(c *gin.Context) {
