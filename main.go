@@ -41,7 +41,10 @@ func main() {
 	//Deklarasi Handler
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+
 	router := gin.Default()
+	//handler images
+	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
 
 	// Handler user
