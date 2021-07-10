@@ -2,6 +2,7 @@ package campaign
 
 type Service interface {
 	GetCampaigns(UserID int) ([]Campaign, error)
+	GetCampaignByID(Input GetCampaignDetailInput) (Campaign, error)
 }
 
 type service struct {
@@ -28,4 +29,12 @@ func (s *service) GetCampaigns(UserID int) ([]Campaign, error) {
 		return campaigns, err
 	}
 	return campaigns, nil
+}
+
+func (s *service) GetCampaignByID(input GetCampaignDetailInput) (Campaign, error) {
+	campaign, err := s.repository.FindByID(input.ID)
+	if err != nil {
+		return campaign, err
+	}
+	return campaign, nil
 }

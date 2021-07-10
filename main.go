@@ -55,6 +55,7 @@ func main() {
 	// api.GET("/users/fetch", userHandler.Login)
 	//Handler Campaigns
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
+	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 
 	// Run Handler
 	router.Run()
