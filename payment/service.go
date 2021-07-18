@@ -1,9 +1,12 @@
 package payment
 
 import (
-	"bwastartup/user"
+	"crouwdfunding-backend/user"
+	"log"
+	"os"
 	"strconv"
 
+	"github.com/joho/godotenv"
 	midtrans "github.com/veritrans/go-midtrans"
 )
 
@@ -18,10 +21,16 @@ func NewService() *service {
 }
 
 func (s *service) GetPaymentURL(transaction Transaction, user user.User) (string, error) {
+	//get Config
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// Dari Mitrans
 	midclient := midtrans.NewClient()
-	midclient.ServerKey = "SB-Mid-server-jF-MGPDh6HEiEvZ_sCwkgMzs"
-	midclient.ClientKey = "SB-Mid-client-vMwYJG31fUCan8xf"
+	midclient.ServerKey = os.Getenv("SERVER_KEY")
+	midclient.ClientKey = os.Getenv("CLIENT_KEY")
 	midclient.APIEnvType = midtrans.Sandbox
 
 	snapGateway := midtrans.SnapGateway{

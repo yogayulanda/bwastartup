@@ -1,8 +1,8 @@
 package transaction
 
 import (
-	"bwastartup/campaign"
-	"bwastartup/user"
+	"crouwdfunding-backend/campaign"
+	"crouwdfunding-backend/user"
 	"time"
 )
 

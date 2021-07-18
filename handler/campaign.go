@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"bwastartup/campaign"
-	"bwastartup/helper"
-	"bwastartup/user"
+	"crouwdfunding-backend/campaign"
+	"crouwdfunding-backend/helper"
+	"crouwdfunding-backend/user"
 	"fmt"
 	"net/http"
 	"strconv"

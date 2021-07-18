@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"bwastartup/helper"
-	"bwastartup/transaction"
-	"bwastartup/user"
+	"crouwdfunding-backend/helper"
+	"crouwdfunding-backend/transaction"
+	"crouwdfunding-backend/user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

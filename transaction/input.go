@@ -1,6 +1,6 @@
 package transaction
 
-import "bwastartup/user"
+import "crouwdfunding-backend/user"
 
 type GetCampaignTransactionInput struct {
 	ID   int `uri:"id" binding:"required"`

@@ -1,8 +1,8 @@
 package transaction
 
 import (
-	"bwastartup/campaign"
-	"bwastartup/payment"
+	"crouwdfunding-backend/campaign"
+	"crouwdfunding-backend/payment"
 	"errors"
 )
 

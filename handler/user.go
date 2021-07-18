@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"bwastartup/auth"
-	"bwastartup/helper"
-	"bwastartup/user"
+	"crouwdfunding-backend/auth"
+	"crouwdfunding-backend/helper"
+	"crouwdfunding-backend/user"
 	"fmt"
 	"net/http"
 
@@ -86,7 +86,7 @@ func (h *userHandler) Login(c *gin.Context) {
 	}
 	formatter := user.FormatUser(loggedinUser, token)
 	response := helper.APIResponse("Login Success", http.StatusOK, "success", formatter)
-	c.JSON(http.StatusBadRequest, response)
+	c.JSON(http.StatusOK, response)
 	//mapping input ke struct
 	//struct parsing ke service
 	//service search user dengan email x

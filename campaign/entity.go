@@ -1,7 +1,7 @@
 package campaign
 
 import (
-	"bwastartup/user"
+	"crouwdfunding-backend/user"
 	"time"
 )
 

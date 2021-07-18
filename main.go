@@ -1,31 +1,37 @@
 package main
 
 import (
-	"bwastartup/auth"
-	"bwastartup/campaign"
-	"bwastartup/handler"
-	"bwastartup/helper"
-	"bwastartup/payment"
-	"bwastartup/transaction"
-	"bwastartup/user"
+	"crouwdfunding-backend/auth"
+	"crouwdfunding-backend/campaign"
+	"crouwdfunding-backend/config"
+	"crouwdfunding-backend/handler"
+	"crouwdfunding-backend/helper"
+	"crouwdfunding-backend/payment"
+	"crouwdfunding-backend/transaction"
+	"crouwdfunding-backend/user"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/joho/godotenv"
 )
 
+func init() {
+
+}
+
 func main() {
-	//Connect DB
-	dsn := "root:root@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	//get .env File
+	err := godotenv.Load()
 	if err != nil {
-		//Hentikan Program dan Munculkan Error
-		log.Fatal(err.Error())
+		log.Fatal("Error loading .env file")
 	}
+
+	//Connect DB , error udah di handle di dalam function
+	db, _ := config.ConnectDB()
 
 	//Deklarasi Repository
 	userRepository := user.NewRepository(db)
@@ -38,15 +44,6 @@ func main() {
 	authService := auth.NewService()
 	paymentService := payment.NewService()
 	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
-
-	//testing
-	// user, _ := userService.GetUserByID(3)
-	// input := transaction.CreateTransactionInput{
-	// 	CampaignID: 1,
-	// 	Amount:     500000,
-	// 	User:       user,
-	// }
-	// transactionService.CreateTransaction(input)
 
 	//Deklarasi Handler
 	userHandler := handler.NewUserHandler(userService, authService)
@@ -75,7 +72,7 @@ func main() {
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransactions)
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	// Run Handler
-	router.Run()
+	router.Run(os.Getenv("SERVER_PORT"))
 }
 
 //Func Middlerware
@@ -122,17 +119,3 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		c.Set("currentUser", user)
 	}
 }
-
-//input dari user
-//handler mapping input user menjadi requesr struct input
-//service : melakukan mapping dari struct input ke struct user/model
-//repository bikin function buat save (v)
-//db save struct user ke db (v)
-
-//middleware
-// 1. ambil nilai header Authorizationc : bearer:token
-// 2. ambil header Authorization ambil nilai tokennya : token
-// 3. validasi token
-// 4. dapat user_id dari valid token ,
-// 5. ambil user dari db berdasarkan user_id lewat service
-// 6. set context isinya user
